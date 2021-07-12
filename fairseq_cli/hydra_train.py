@@ -36,18 +36,12 @@ def hydra_main(cfg: FairseqConfig) -> float:
     cfg = OmegaConf.create(OmegaConf.to_container(cfg, resolve=True, enum_to_str=True))
     OmegaConf.set_struct(cfg, True)
 
-    try:
-        if cfg.common.profile:
-            with torch.cuda.profiler.profile():
-                with torch.autograd.profiler.emit_nvtx():
-                    distributed_utils.call_main(cfg, pre_main)
-        else:
-            distributed_utils.call_main(cfg, pre_main)
-    except BaseException as e:
-        if not cfg.common.suppress_crashes:
-            raise
-        else:
-            logger.error("Crashed! " + str(e))
+    if cfg.common.profile:
+        with torch.cuda.profiler.profile():
+            with torch.autograd.profiler.emit_nvtx():
+                distributed_utils.call_main(cfg, pre_main)
+    else:
+        distributed_utils.call_main(cfg, pre_main)
 
     # get best val and return - useful for sweepers
     try:

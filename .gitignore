@@ -134,3 +134,13 @@ experimental/*
 
 # Weights and Biases logs
 wandb/
+
+manifest
+outputs
+*.km
+*.npy
+*.len
+*.pth
+*.tsv
+*.sh
+*.txt
